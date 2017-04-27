@@ -1,0 +1,122 @@
+using System.Collections.Generic;
+using System.Linq;
+using RecipeSavants.Models.Service;
+using RecipeSavants.Framework.Repository.Azure;
+using RecipeSavants.Models.Domain;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RecipeSavants.Framework.Providers.Azure;
+using Microsoft.Extensions.Caching.Memory;
+
+// For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace RecipeSavants.Services.Controllers
+{
+    [Produces("application/json")]
+    [Route("api/[controller]")]
+    public class GroupUpdateController : Controller
+    {
+        private IMemoryCache cache;
+
+        public GroupUpdateController(IMemoryCache memoryCache)
+        {
+            cache = memoryCache;
+        }
+        private const string connectionstring = "DefaultEndpointsProtocol=https;AccountName=recipesavant;AccountKey=urqTYNVwcQqEv87iqpBja45jqTevD/pNlETSO31qlZfT+AHZQYI2yW0LuDlFAv7u9x7OezLZrXAY5S+PWP4Pgw==";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Model"></param>
+        [HttpPost]
+        public IActionResult Post([FromBody]GroupUpdateServiceModel Model)
+        {
+            UnitOfWork<GroupUpdate> proxy = new UnitOfWork<GroupUpdate>(new SavantsContext(new AzureInformation(connectionstring, Model.GroupFK.ToString(), "GroupUpdate")));
+            proxy.Repository.Insert(Mapper.Map<GroupUpdate>(Model));
+            proxy.Repository.SaveChanges();
+            return Ok();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("Like")]
+        public IActionResult Post([FromBody] UpdateLikeCountServiceModel model)
+        {
+            UnitOfWork<UpdateLikeCount> proxy = new UnitOfWork<UpdateLikeCount>(new SavantsContext(new AzureInformation(connectionstring, model.UpdateId.ToString(), "UpdateLikeCount")));
+            var current = proxy.Repository.GetByID(model.UpdateId);
+            current.LikeCount++;
+            proxy.Repository.Insert(Mapper.Map<UpdateLikeCount>(current));
+            proxy.Repository.SaveChanges();
+            return Json(current.LikeCount);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="GroupId"></param>
+        /// <param name="UpdateId"></param>
+        [HttpDelete("{GroupId}/{UpdateId}")]
+        public IActionResult Delete(string GroupId, string UpdateId)
+        {
+            UnitOfWork<GroupUpdate> updates = new UnitOfWork<GroupUpdate>(new SavantsContext(new AzureInformation(connectionstring, GroupId, "GroupUpdate")));
+            var temp = updates.Repository.GetAll().Select(s => s.GroupUpdateId).Distinct().ToList();      //list of updates to deactivate
+            foreach (var item in temp)
+            {
+                UnitOfWork<GroupComment> c = new UnitOfWork<GroupComment>(new SavantsContext(new AzureInformation(connectionstring, item.ToString(), "GroupComment")));
+                c.Repository.GetAll().ForEach(f => f.IsVisible = false);
+                c.Repository.SaveChanges();
+            }
+            updates.Repository.GetAll().ForEach(f => f.IsVisible = false);
+            updates.Repository.SaveChanges();
+            return Ok();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="GroupId"></param>
+        /// <param name="UpdateId"></param>
+        /// <returns></returns>
+        [HttpGet("{GroupId}/{UpdateId}")]
+        public IActionResult Get(string GroupId, string UpdateId)
+        {
+            Dictionary<GroupUpdateServiceModel, List<GroupCommentServiceModel>> rv = new Dictionary<GroupUpdateServiceModel, List<GroupCommentServiceModel>>();
+            UnitOfWork<GroupComment> comments = new UnitOfWork<GroupComment>(new SavantsContext(new AzureInformation(connectionstring, UpdateId, "GroupComment")));
+            var temp2 = comments.Repository.GetAll().Where(w => w.IsVisible == true).OrderBy(o => o.DateStamp);
+            UnitOfWork<GroupUpdate> updates = new UnitOfWork<GroupUpdate>(new SavantsContext(new AzureInformation(connectionstring, GroupId, "GroupUpdate")));
+            var update = updates.Repository.GetAll().FirstOrDefault();
+            var key = Mapper.Map<GroupUpdateServiceModel>(update);
+            var value = Mapper.Map<List<GroupCommentServiceModel>>(temp2);
+            rv.Add(key, value);
+            return Json(rv);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="GroupId"></param>
+        /// <param name="Page"></param>
+        /// <returns></returns>
+        [HttpGet("{GroupId}/{Page}")]
+        public IActionResult Get(string GroupId, int Page)
+        {
+            Dictionary<GroupUpdateServiceModel, List<GroupCommentServiceModel>> rv = new Dictionary<GroupUpdateServiceModel, List<GroupCommentServiceModel>>();
+            UnitOfWork<GroupUpdate> updates = new UnitOfWork<GroupUpdate>(new SavantsContext(new AzureInformation(connectionstring, GroupId, "GroupUpdate")));
+
+            var keys = updates.Repository.GetAll().Skip(Page * 20).Take(20);
+            foreach (var item in keys)
+            {
+                UnitOfWork<GroupComment> comments = new UnitOfWork<GroupComment>(new SavantsContext(new AzureInformation(connectionstring, item.GroupUpdateId.ToString(), "GroupComment")));
+                var temp2 = comments.Repository.GetAll().Where(w => w.IsVisible == true).OrderBy(o => o.DateStamp).Take(5);
+                var value = Mapper.Map<List<GroupCommentServiceModel>>(temp2);
+                rv.Add(Mapper.Map<GroupUpdateServiceModel>(item), value);
+            }
+            return Json(rv);
+        }
+
+    }
+}

@@ -1,0 +1,43 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using RecipeSavants.Frameworks.Providers.Documents;
+using RecipeSavants.Models.Document;
+using RecipeSavants.Models.Service;
+using RecipeSavants.Services.Utilities;
+
+// For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace RecipeSavants.Services.Controllers
+{
+    [Route("api/[controller]")]
+    public class GetByUserController : BaseController
+    {
+        private IRecipesRepository repo;
+        IMemoryCacheWrapper wrapper;
+        public GetByUserController(IMemoryCache memoryCache, IRecipesRepository _repo, IMemoryCacheWrapper _wrapper)
+        {
+            cache = memoryCache;
+            repo = _repo;
+            wrapper = _wrapper;
+        }
+
+        [HttpGet("{UserId}")]
+        public IActionResult RecipeByEditor(string UserId)
+        {
+            var t = repo.GetByUser<RecipeDocumentModel>(UserId, true);
+            return Json(Mapper.Map<List<DocumentRecipeViewModel>>(t));
+        }
+
+        [HttpGet("SubmittedRecipes")]
+        public IActionResult SubmittedRecipes()
+        {
+            var t = repo.GetAllUserSumbittedNotApproved<RecipeDocumentModel>();
+            return Json(Mapper.Map<List<DocumentRecipeViewModel>>(t));
+        }
+    }
+}

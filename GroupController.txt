@@ -1,0 +1,288 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using RecipeSavants.Models.Service;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using RecipeSavants.Frameworks.Providers.Documents;
+using RecipeSavants.Models.Document;
+using RecipeSavants.Services.Utilities;
+using RedDog.Search;
+using RedDog.Search.Http;
+using RedDog.Search.Model;
+
+// For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace RecipeSavants.Services.Controllers
+{
+    [Produces("application/json")]
+    [Route("api/[controller]")]
+    public class GroupController : BaseController
+    {
+        IDocumentRepository repo;
+        IMemoryCacheWrapper wrapper;
+        public GroupController(IMemoryCache memoryCache, IDocumentRepository repositoryObj, IMemoryCacheWrapper _wrapper)
+        {
+            cache = memoryCache;
+            repo = repositoryObj;
+            wrapper = _wrapper;
+        }
+
+        [ValidationFilter]
+        [HttpPost]
+        public IActionResult Post([FromBody] GroupServiceModel model)
+        {
+            var m = Mapper.Map<GroupDocumentModel>(model);
+            repo.InsertOrUpdate(m.id, m);
+            //update cache for this group
+            wrapper.SetCache("Group_" + m.id, m);
+            return Ok();
+        }
+
+        //[ValidationFilter]
+        //[HttpPost("{GroupId}")]
+        //public IActionResult Post(string GroupId, [FromBody] GroupUpdatesServiceModel model)
+        //{
+        //    var current = repo.GetById<GroupDocumentModel>("4-" + GroupId);
+        //    var m = Mapper.Map<GroupUpdatesDocumentModel>(model);
+        //    m.id = Guid.NewGuid().ToString();
+        //    m.CreatedDateStamp = DateTime.Now;
+        //    m.CreatedDateStampEpoch = DateTime.Now.ToEpoch();
+        //    current.Updates.Add(m);
+        //    repo.InsertOrUpdate("4-" + GroupId, current);
+        //    //update cache for this group
+        //    wrapper.SetCache("Group_" + m.id, current);
+        //    return Ok();
+        //}
+
+        [ValidationFilter]
+        [HttpPost("{GroupId}")]
+        public IActionResult Post(string GroupId, [FromBody] WallUpdatesDocumentServiceModel model)
+        {
+            var m = Mapper.Map<WallUpdatesDocumentModel>(model);
+            m.id = Guid.NewGuid().ToString();
+            repo.InsertOrUpdate(m.id, m);
+            //grab the latest group
+            var group = repo.GetById<GroupDocumentModel>(GroupId);
+            //profile.Updates.Add(m);
+            group.Updates.Add(new SocialUpdatesDocumentModel() { id = m.id, CreatedDate = DateTime.Now, CreatedDateStampEpoch = DateTime.Now.ToEpoch(), Hide = false });
+            repo.InsertOrUpdate(group.id, group);
+            //update cache for this group
+            wrapper.SetCache("Group_" + group.id, group);
+            //IsQuestion ?
+            //if (model.UpdateType == "question")
+            //{
+            //    //post to question
+            //    DocumentDbRepository<QuestionDocumentModel> repo2 = new DocumentDbRepository<QuestionDocumentModel>("recipes", "documents");
+            //    var id2 = Guid.NewGuid().ToString();
+            //    var m2 = new QuestionDocumentModel()
+            //    {
+            //        Body = model.Body,
+            //        DocumentType = (int)DocumentType.Question,
+            //        IsVisible = true,
+            //        Id = id2,
+            //        PostDate = DateTime.Now,
+            //        PostDateEpoch = DateTime.Now.ToEpoch(),
+            //        Title = model.Title
+            //    };
+            //    repo2.InsertOrUpdate(id2, m2);
+            //}
+            ////share with network
+            //foreach (var relation in profile.Relationships.Where(w => w.IsBlocked == false && w.IsHidden == false))
+            //{
+            //    var fixedrelation = ReturnStringTitleCase(relation.id);
+            //    var user = profileRepo.GetById(fixedrelation);
+            //    user.SocialUpdates.Add(new SocialUpdatesDocumentModel() { id = m.id, CreatedDate = DateTime.Now, CreatedDateStampEpoch = DateTime.Now.ToEpoch() });
+            //    profileRepo.InsertOrUpdate(relation.id, user);
+            //}
+            return Ok();
+        }
+
+        private List<GroupServiceModel> PopulateFlatSearchModel(IApiResponse<SearchQueryResult> results, IndexQueryClient client)
+        {
+            List<GroupServiceModel> r = new List<GroupServiceModel>();
+            if (results.Body != null)
+            {
+                foreach (var item in results.Body.Records)
+                {
+                    r.Add(HydrateModel(item));
+                }
+            }
+            return r;
+        }
+
+        private GroupServiceModel HydrateModel(SearchQueryRecord r)
+        {
+            if (r != null)
+            {
+                return new GroupServiceModel()
+                {
+                    Description = (string)r.Properties["Description"] ?? "",
+                    GroupName = (string)r.Properties["GroupName"] ?? "",
+                    Photo = (string)r.Properties["Photo"] ?? "",
+                    IsDeleted = (bool)r.Properties["IsDeleted"],
+                    id = (string)r.Properties["id"] ?? "",
+                    Focus1FK = (string)r.Properties["Focus1FK"] ?? "",
+                    Focus2FK = (string)r.Properties["Focus2FK"] ?? "",
+                    Focus3FK = (string)r.Properties["Focus3FK"] ?? ""
+                };
+            }
+            return null;
+        }
+
+        [HttpGet("search/{Term}")]
+        public List<GroupServiceModel> GroupIndexSearch(string Term)
+        {
+            ApiConnection connection = ApiConnection.Create("savantsearch", "6ADD605AB1B4575F8FF7C74C88D0D82E");
+            var client = new IndexQueryClient(connection);
+            var results = client.SearchAsync("groupindex", new SearchQuery(Term)
+                .OrderBy("GroupName")
+                .SearchField("GroupName").Mode(SearchMode.All)
+                .Count(true));
+            var list = PopulateFlatSearchModel(results.Result, client);
+            return list;
+        }
+
+        [HttpGet("{GroupId}/{Page}")]
+        public IActionResult Get(string GroupId, int Page)
+        {
+            var m = repo.GetById<GroupDocumentModel>(GroupId);
+            var list = m.Updates.Where(x => !x.Hide).OrderByDescending(x => x.CreatedDateStampEpoch).Skip(Page * 10).Take(10).ToList();
+            var list2 = new List<string>();
+            foreach (var item in list)
+            {
+                list2.Add(item.id);
+            }
+            var temp = repo.GetByList<WallUpdatesDocumentModel>(String.Join(",", list2));
+            temp.ForEach(x => x.Comments = x.Comments.Where(c => c.IsVisible).ToList());
+            return Json(temp);
+        }
+
+        //TODO
+        [HttpDelete("{GroupId}/{UpdateId}")]
+        public IActionResult PostDelete(string GroupId, string UpdateId)
+        {
+            //TODO
+            return BadRequest();
+        }
+
+        //TODO
+        [HttpDelete("Comment/{GroupId}/{UpdateId}")]
+        public IActionResult CommentDelete(string GroupId, string UpdateId)
+        {
+            //TODO
+            return BadRequest();
+        }
+
+        [HttpGet("{UserId}")]
+        public IActionResult Get(string UserId)
+        {
+            var m = repo.GetByDocumentType<GroupDocumentModel>((int)DocumentType.Group).Where(x => x.UserFK == UserId);
+            var n = Mapper.Map<List<GroupServiceModel>>(m);
+            return Json(n);
+        }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            var m = repo.GetByDocumentType<GroupDocumentModel>((int)DocumentType.Group);
+            var n = Mapper.Map<List<GroupServiceModel>>(m.Where(x => !x.IsDeleted));
+            return Json(n);
+        }
+
+
+        [HttpGet("GetGroup/{GroupId}")]
+        public IActionResult GetGroup(string GroupId)
+        {
+            var m = repo.GetById<GroupDocumentModel>(GroupId);
+            var n = Mapper.Map<GroupServiceModel>(m);
+            var list = m.Updates.Where(x => !x.Hide).OrderByDescending(x => x.CreatedDateStampEpoch).ToList();
+            var list2 = new List<string>();
+            foreach (var item in list)
+            {
+                list2.Add(item.id);
+            }
+            var temp = repo.GetByList<WallUpdatesDocumentModel>(String.Join(",", list2));
+            n.WallUpdates = Mapper.Map<List<WallUpdatesDocumentServiceModel>>(temp);
+            return Json(n);
+        }
+
+        //[HttpDelete]
+        //public IActionResult Delete()
+        //{
+        //    var m = repo.GetByDocumentType<GroupDocumentModel>((int)DocumentType.Group);
+        //    foreach (var item in m)
+        //    {
+        //        repo.Delete(item.id);
+        //    }
+        //    return Ok();
+        //}
+
+        [HttpPost("UpdateGroup")]
+        public IActionResult UpdateGroup([FromBody] GroupServiceModel model)
+        {
+            var m = repo.GetById<GroupDocumentModel>(model.id);
+            var ids = model.WallUpdates.Select(x => x.id).ToList();
+            var idsToRemove = m.Updates.Where(x => !ids.Contains(x.id)).Select(x => x.id).ToList();
+            if (m != null)
+            {
+                m.GroupName = model.GroupName;
+                m.Updates.Where(x => idsToRemove.Contains(x.id)).ToList().ForEach(x => x.Hide = true);
+                repo.InsertOrUpdate(m.id, m);
+            }
+            var wallUpdates = repo.GetByList<WallUpdatesDocumentModel>(String.Join(",", ids));
+            foreach (var item in model.WallUpdates)
+            {
+                var update = wallUpdates.Where(x => x.id == item.id).FirstOrDefault();
+                update.Body = item.Body;
+                repo.InsertOrUpdate(update.id, update);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("Delete/{Id}")]
+        public IActionResult DeleteGroup(string Id)
+        {
+            var m = repo.GetById<GroupDocumentModel>(Id);
+            if (m != null)
+            {
+                m.IsDeleted = true;
+                repo.InsertOrUpdate(m.id, m);
+            }
+            return Ok();
+        }
+
+        //[HttpGet("{GroupId}/{UpdateId}")]
+        //public IActionResult Get(string GroupId, string UpdateId)
+        //{
+        //    var m = repo.GetById<GroupDocumentModel>(GroupId).Updates.FirstOrDefault(f => f.id == UpdateId);
+        //    var n = Mapper.Map<GroupUpdatesServiceModel>(m);
+        //    return Json(n);
+        //}
+
+        //[HttpPost("{GroupId}/{PostingUserId}/{UpdateId}")]
+        //public IActionResult IncreaseLike(string GroupId, string PostingUserId, string UpdateId)
+        //{
+        //    var current = repo.GetById<GroupDocumentModel>("4-" + GroupId);
+        //    foreach (var item in current.Updates.Where(w => w.id == UpdateId).ToList())
+        //    {
+        //        if (!item.Like.Contains("1-" + PostingUserId))
+        //        {
+        //            item.Like.Add("1-" + PostingUserId);
+        //        }
+        //    }
+        //    wrapper.SetCache("Group_" + GroupId, current);
+        //    return Json(current.Updates.Where(w => w.id == UpdateId).Count().ToString());
+        //}
+
+        //[HttpGet("wall/{GroupId}/{Page}")]
+        //public IActionResult Get(string GroupId, int Page)
+        //{
+        //    var m = Mapper.Map<ProfileDocumentModel>(repo.GetById<GroupDocumentModel>("4-" + GroupId));
+        //    return Json(Mapper.Map<List<GroupUpdatesServiceModel>>(m.Updates.OrderByDescending(o => o.LastModifiedDateStamp).Skip(Page * 10).Take(10).ToList()));
+        //}
+    }
+}

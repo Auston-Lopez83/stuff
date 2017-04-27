@@ -1,0 +1,20 @@
+Feature: Service::GetByUser:Get {UserID}
+    As a Service I need to get Recipes by a User
+Scenario: Get {UserID} Successful Case
+    Given: A front-end system has requested the Recipes by a single UserID
+    When:  The front-end system has provided a UserID
+    When:  The UserID exist
+    Then:  The service returns all the recipes with the UserID  
+Scenario: Get {UserID} Unsuccessful Case
+    Given: A front-end system has requested the Recipes in a LIst by a single UserID
+    When:  The front-end system has provided a UserID
+    When:  The UserID does not exist
+    Then:  The service returns null (As the user does not exist there for no recipes exist)
+    
+Feature:Service::GetByUser:Get "SubmittedRecipes"
+    As a service I need to get Recipes that have been submitted by a User yet has not ben approved
+Scenario: Get "SubmittedRecipes" Successful Case
+    Given: A front-end system is requesting all recipes of a single user that are 'not approved'
+    When:  The front-end system has provided a UserID
+    When:  
+Scenario: Get "SubmittedRecipes" Unsuccessful Case
