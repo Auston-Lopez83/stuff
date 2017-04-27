@@ -1,0 +1,6 @@
+Feature: Service::GroupController:Post
+    As a service I need to create a Group
+Scenario: GroupController Successful Case
+    Given: The front-end system is Creating a new Group
+    When:  The front-end system has provided a valid model 
+Scenario: GroupController Unsuccessful Case 

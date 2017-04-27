@@ -16,5 +16,10 @@ Feature:Service::GetByUser:Get "SubmittedRecipes"
 Scenario: Get "SubmittedRecipes" Successful Case
     Given: A front-end system is requesting all recipes of a single user that are 'not approved'
     When:  The front-end system has provided a UserID
-    When:  
+    When:  The recipes IsApproved is false
+    Then:  The service returns relevant recipes to the list
 Scenario: Get "SubmittedRecipes" Unsuccessful Case
+    Given: A front-end system is requesting all recipes of a single user that are 'not approved
+    When:  The front-end system has provided a UserID
+    When:  The UserID does not exist and/ or all recipes IsApproved is true
+    Then:  The service returns null (As the user does not exist there for no recipes exist) 
