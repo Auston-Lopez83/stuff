@@ -1,6 +1,23 @@
 Feature: Service::GroupController:Post
     As a service I need to create a Group
 Scenario: GroupController Successful Case
-    Given: The front-end system is Creating a new Group
+    Given: The front-end system is creating a new Group
     When:  The front-end system has provided a valid model 
-Scenario: GroupController Unsuccessful Case 
+    Then:  The service returns a 200 status message
+
+Feature: Service::GroupController:Post {GroupID}
+    As a service I need to Post to the group wall
+Scenario: GroupController Successful Case
+    Given: The front-end system is creating a new wall post 
+    When:  The front-end system has provided a valid model
+    When:  The front-end system system provided a GroupID
+    Then:  The service returns a 200 status message
+Scenario: GroupController Unsuccessful Case
+    Given: The front-end system is creating a new wall post 
+    When:  The front-end system has provided a valid model
+    When:  The front-end system system provided a GroupID that does not exist
+    Then:  The service returns a 400 status message 
+
+Feature: Service::GroupController:Get
+    As a service I need to search for wall post with a term in the model.Body
+Scenario: GroupController
