@@ -1,0 +1,47 @@
+Feature: Service::GroupController:Post
+    As a service I need to create a Group Post update
+Scenario: GroupController Post Successful Case
+    Given: The front-end system is creating a new Group Post
+    When:  The front-end system has provided a valid model 
+    Then:  The service returns a 200 status message
+
+Feature: Service::GroupController:Post "Like"
+    As a service I need to post a like to a Wall post update
+Scenario: GroupController Post "Like" Successful Case
+    Given: The front-end system is posting a Like to a wall post update
+    When:  The front-end system has provided a UpdateId
+    Then:  The service adds 1 to the current LikeCount
+Scenario: GroupController Post "Like" Unsuccessful Case
+    Given: The front-end system is posting a Like to a wall post update
+    When:  The front-end system has provided a UpdateId
+    Then:  The service returns null (no UpdateId exist in the DocumentDB)
+
+Feature: Service::GroupController:Delete "{GroupId}/{UpdateID}"
+    As a service I need to delete a Wall post update
+Scenario: GroupController Delete "{GroupId}/{UpdateID}" Successful Case
+    Given: The front-end system is wanting to delete a wall post update
+    When:  The front-end system has provided a UpdateId and a GroupId
+    Then:  The service deletes post
+    Then:  The service returns a 200 status message
+Scenario: GroupController Delete "{GroupId}/{UpdateID}" Unsuccessful Case
+    Given: The front-end system is deleting a wall post update
+    When:  The front-end system has provided a UpdateId and GroupId
+    Then:  The service returns null (no UpdateId and or GroupId exist in the DocumentDB)
+
+Feature: Service::GroupController:Get "{GroupId}/{UpdateID}"
+    As a service I need to get all post updates by a GroupId
+Scenario: GroupController Get "{GroupId}/{UpdateID}" Successful Case
+    Given: The front-end system is wanting to delete a wall post update
+    When:  The front-end system has provided a UpdateId and a GroupId
+    Then:  The service returns a List of all post update by an GroupId
+
+Feature: Service::GroupController:Get "{GroupId}/{Page}"
+    As a service I need to get a specific page of updated wall post by a GroupId
+Scenario: GroupController Get "{GroupId}/{Page}" Successful Case
+    Given: The front-end system is requesting a specific page of updated wall post
+    When:  The front-end system has provided a Page and a GroupId
+    Then:  The service provides a page List post update by an GroupId
+Scenario: GroupController Get "{GroupId}/{Page}" Unsuccessful Case
+    Given: The front-end system is requesting a specific page of updated wall post
+    When:  The front-end system has provided a Page and a GroupId
+    Then:  The service returns null (as the Page and/or GroupId does not exist in the DocumentDB)

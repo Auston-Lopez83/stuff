@@ -1,23 +1,96 @@
 Feature: Service::GroupController:Post
     As a service I need to create a Group
-Scenario: GroupController Successful Case
+Scenario: GroupController Post Successful Case
     Given: The front-end system is creating a new Group
     When:  The front-end system has provided a valid model 
     Then:  The service returns a 200 status message
 
 Feature: Service::GroupController:Post {GroupID}
     As a service I need to Post to the group wall
-Scenario: GroupController Successful Case
+Scenario: GroupController Post {GroupID} Successful Case
     Given: The front-end system is creating a new wall post 
     When:  The front-end system has provided a valid model
     When:  The front-end system system provided a GroupID
-    Then:  The service returns a 200 status message
-Scenario: GroupController Unsuccessful Case
+    Then:  The service returns 200 status message
+Scenario: GroupController Post {GroupID} Unsuccessful Case
     Given: The front-end system is creating a new wall post 
     When:  The front-end system has provided a valid model
     When:  The front-end system system provided a GroupID that does not exist
-    Then:  The service returns a 400 status message 
+    Then:  The service returns null (as the GroupID does not exist in the DocumentDB)
 
-Feature: Service::GroupController:Get
-    As a service I need to search for wall post with a term in the model.Body
-Scenario: GroupController
+Feature: Service::GroupController:Get "search/{Term"}
+   As a service I need to search the wall for a post with a specific term
+Scenario: GroupController Get "search/{Term}" Successful Case
+    Given: The front-end system is wanting a List of post with a specific term in the description of any GroupServiceModel of the DocumentDB
+    When:  The front-end system has provided a term to be searched
+    Then:  The service returns a list of results ordered by GroupName
+Scenario: GroupController Get "search/{Term}" Unsuccessful Case
+    Given: The front-end system is wanting a List of post with a specific term in the description of any GroupServiceModel of the DocumentDB
+    When:  The front-end system has provided a term to be searched
+    Then:  The service returns null (as the term does not exist in the DocumentDB)
+
+Feature: Service::GroupController:Get "{GroupID}/{Page}"
+    As a service I need to go to a specific page of a Wall of GroupID
+Scenario: GroupController:Get "{GroupID}/{Page}" Successful Case
+    Given:  The front-end service is requesting a specific page in a groups wall
+    When:   The front end has provided a GroupID(string) and a Page(int)
+    Then:   The service returns a List of WallUpdateDocumentModels
+Scenario: GroupController:Get "{GroupID}/{Page}" Unsuccessful Case
+    Given:  The front-end service is requesting a specific page in a groups wall
+    When:   The front end has provided a GroupID(string) and a Page(int)
+    Then:   The service returns null (as GroupID does not exist and/or Page does not exist) 
+
+Feature: Service::GroupController:Get {UserId}
+    As a service I need to find all the wall post by a User
+Scenario: Scenario: GroupController:Get {UserId} Successful Case
+    Given: The front-end service is requesting all wall post by a User
+    When:  The front-end service has provided a UserId
+    Then:  The service returns a list of post by the User
+Scenario: Scenario: GroupController:Get {UserId} Unsuccessful Case
+    Given: The front-end service is requesting all wall post by a User
+    When:  The front-end service has provided a UserId
+    Then:  The service returns null (the UserId does not exist)
+
+Feature: Service::GroupController:Get 
+    As a service I need to find all the wall post 
+Scenario: Scenario: GroupController:Get Successful Case
+    Given: The front-end service is requesting all wall post
+    Then:  The service returns a list of all post
+Scenario: Scenario: GroupController:Get Unsuccessful Case
+    Given: The front-end service is requesting all wall post
+    Then:  The service returns null (no post exist)
+
+Feature: Service::GroupController:Get "GetGroup/{UserId}"
+    As a service I need to find all the wall post by a User within a specific group wall
+Scenario: Scenario: GroupController:Get "GetGroup/{UserId}" Successful Case
+    Given: The front-end service is requesting all wall post by a User within a specific group wall
+    When:  The front-end service has provided a UserId and GroupID
+    Then:  The service returns a list of post by the User within a specific group wall
+Scenario: Scenario: GroupController:Get "GetGroup/{UserId}" Unsuccessful Case
+    Given: The front-end service is requesting all wall post by a User within a specific group wall
+    When:  The front-end service has provided a UserId and GroupID
+    Then:  The service returns null (the UserId and/or GroupID does not exist)
+
+Feature: Service::GroupController:Post 
+    As a service I need to update a a group post
+Scenario: Scenario: GroupController:Post Successful Case
+    Given: The front-end service is updating a group post
+    When:  The front-end service provides a GroupName
+    When:  The front-end service provides a hydrated model
+    Then:  The service returns a 200 status message
+Scenario: Scenario: GroupController:Post Unsuccessful Case
+    Given: The front-end service is updating a group post
+    When:  The front-end service provides a GroupName
+    When:  The front-end service does not provides a hydrated model
+    Then:  The service returns null (as the post does not exist in the DocumentDB)
+
+Feature: Service::GroupController:Post  "Delete/{Id}"
+    As a service I need to delete a post
+Scenario: Scenario: GroupController:Post "Delete/{Id}" Successful Case
+    Given: The front-end service is requesting to delete a specific post
+    When:  The front-end service has provided an Id for a post to be deleted
+    Then:  The service returns a 200 status 
+Scenario: Scenario: GroupController:Post "Delete/{Id}" Unsuccessful Case
+    Given: The front-end service is requesting to delete a specific post
+    When:  The front-end service has provided an Id for a post to be deleted
+    Then:  The service returns null (as the post with that Id does not exist in the DocumentDB)

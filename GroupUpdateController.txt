@@ -13,22 +13,22 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace RecipeSavants.Services.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/[controller]")]
-    public class GroupUpdateController : Controller
-    {
-        private IMemoryCache cache;
+    // [Produces("application/json")]
+    // [Route("api/[controller]")]
+    // public class GroupUpdateController : Controller
+    // {
+    //     private IMemoryCache cache;
 
-        public GroupUpdateController(IMemoryCache memoryCache)
-        {
-            cache = memoryCache;
-        }
-        private const string connectionstring = "DefaultEndpointsProtocol=https;AccountName=recipesavant;AccountKey=urqTYNVwcQqEv87iqpBja45jqTevD/pNlETSO31qlZfT+AHZQYI2yW0LuDlFAv7u9x7OezLZrXAY5S+PWP4Pgw==";
+    //     public GroupUpdateController(IMemoryCache memoryCache)
+    //     {
+    //         cache = memoryCache;
+    //     }
+    //     private const string connectionstring = "DefaultEndpointsProtocol=https;AccountName=recipesavant;AccountKey=urqTYNVwcQqEv87iqpBja45jqTevD/pNlETSO31qlZfT+AHZQYI2yW0LuDlFAv7u9x7OezLZrXAY5S+PWP4Pgw==";
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Model"></param>
+    //     /// <summary>
+    //     /// 
+    //     /// </summary>
+    //     /// <param name="Model"></param>
         [HttpPost]
         public IActionResult Post([FromBody]GroupUpdateServiceModel Model)
         {
@@ -38,11 +38,11 @@ namespace RecipeSavants.Services.Controllers
             return Ok();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        // / <summary>
+        // / 
+        // / </summary>
+        // / <param name="model"></param>
+        // / <returns></returns>
         [HttpPost("Like")]
         public IActionResult Post([FromBody] UpdateLikeCountServiceModel model)
         {
@@ -54,11 +54,11 @@ namespace RecipeSavants.Services.Controllers
             return Json(current.LikeCount);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="GroupId"></param>
-        /// <param name="UpdateId"></param>
+        // / <summary>
+        // / 
+        // / </summary>
+        // / <param name="GroupId"></param>
+        // / <param name="UpdateId"></param>
         [HttpDelete("{GroupId}/{UpdateId}")]
         public IActionResult Delete(string GroupId, string UpdateId)
         {
@@ -75,12 +75,12 @@ namespace RecipeSavants.Services.Controllers
             return Ok();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="GroupId"></param>
-        /// <param name="UpdateId"></param>
-        /// <returns></returns>
+        // / <summary>
+        // / 
+        // / </summary>
+        // / <param name="GroupId"></param>
+        // / <param name="UpdateId"></param>
+        // / <returns></returns>
         [HttpGet("{GroupId}/{UpdateId}")]
         public IActionResult Get(string GroupId, string UpdateId)
         {
@@ -95,12 +95,12 @@ namespace RecipeSavants.Services.Controllers
             return Json(rv);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="GroupId"></param>
-        /// <param name="Page"></param>
-        /// <returns></returns>
+        // / <summary>
+        // / 
+        // / </summary>
+        // / <param name="GroupId"></param>
+        // / <param name="Page"></param>
+        // / <returns></returns>
         [HttpGet("{GroupId}/{Page}")]
         public IActionResult Get(string GroupId, int Page)
         {
