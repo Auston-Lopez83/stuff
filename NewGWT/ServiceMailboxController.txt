@@ -1,0 +1,91 @@
+Feature: Service::MailboxController:Post {User}
+    As a service I need to post a new message
+Scenario: MailboxController Post Successful Case:
+    Given: The front-end system is requesting to create a new message
+    When:  The front-end system has provided a valid model 
+    Then:  The service returns a 200 status message 
+Scenario: MailboxController Post Unsuccessful Case:
+    Given: The front-end system is requesting to create a new message
+    When:  The front-end system has not provided a valid model 
+    Then:  The service returns a 400 error
+
+Feature: Service::MailboxController: Get {User}/{Page}/{SortOption}/{Tag}
+    As a service I need to retrieve messages with a unique tag
+Scenario: MailboxController Get U/P/SO/T Successful case
+    Given: The front-end system is requesting a list of all message with a tag in an order and a unique page
+    When:  The front-end has provided a user, page, SortOption, and tag
+    Then:  The service returns a list of messages
+Scenario: MailboxController Get U/P/SO/T Unsuccessful case
+    Given: The front-end system is requesting a list of all message with a tag in an order and a unique page
+    When:  The front-end has provided a user, page, SortOption, and tag
+    Then:  The service returns null as there are no message with listed requirements 
+
+Feature: Service::MailboxController:Get {User}
+    As a service I need to display all message of one user
+Scenario: MailboxController Get {User} Successful Case
+    Given: The front-end system is requesting a list of all messages of a single user
+    When:  The front-end system has given a userId
+    Then:  The service will return a list of messages by that user
+Scenario: MailboxController Get {User} Unsuccessful Case
+    Given: The front-end system is requesting a list of all messages of a single user
+    When:  The front-end system has given a userId
+    Then:  The service will return null as user does not exist
+
+Feature: Service:MailboxController:Post AddMessage/{User}
+    As a service I need to update a message
+Scenario: MailboxController Post AddMessage/{User} Successful Case
+    Given: The front-end system is updating an existing message
+    When:  The front end system has provided a valid model
+    Then:  The service return a 200 status message
+Scenario: MailboxController Post AddMessage/{User} Successful Case
+    Given: The front-end system is updating an existing message
+    When:  The front end system has not provided a valid model
+    Then:  The service return null as the model is not valid
+
+Feature: Service:MailboxController:Post ArchiveMessage/{User}/{id}/{IsArchived}
+    As a service I need to save a message
+Scenario: MailboxController Post ArchiveMessage/{User}/{id}/{IsArchived}
+    Given: The front-end system is saving a message to the archive
+    When:  The front end system has changed IsArchived from False to True
+    Then:  The service uses the SendMessages method 
+    Then:  The service return a 200 status message
+Scenario: MailboxController Post ArchiveMessage/{User}/{id}/{IsArchived} Unsuccessful Case
+    Given: The front-end system is saving a message to the archive
+    When:  The front end system has changed  not IsArchived from False to True
+    Then:  The service uses returns null as there is no message to be archived
+
+Feature: Service:MailboxController:Post InsertTags/{User}/{id}
+    As a service I need to add a tag to a message
+Scenario: MailboxController Post InsertTags/{User}/{id} Successful Case
+    Given: The front end service is requesting to add a tag to a message
+    When:  The front end service has provided a hydrated service model and a tag to be added 
+    Then:  The system will return a 200 status message
+Scenario: MailboxController Post InsertTags/{User}/{id} Unsuccessful Case
+    Given: The front end service is requesting to add a tag to a message
+    When:  The front end service has not provided a hydrated service model  
+    Then:  The system will return 400 error as the message does not exist
+
+Feature: Service::MailboxController:Post SendMessage/{User}
+    As a service I need to send a message to another User
+Scenario: MailboxController Post SendMessage/{User} Successful Case:
+    Given: The front-end system is requesting to send a message to a User
+    When:  The front-end system has provided a valid model and a user
+    Then:  The service returns a 200 status message 
+Scenario: MailboxController Post SendMessage/{User} Unsuccessful Case:
+    Given: The front-end system is requesting to send a message to a User
+    When:  The front-end system has not provided a valid model and or user
+    Then:  The service returns a 400 error
+
+Feature: Service::MailboxController:Delete
+    As a service I need to delete a message
+Scenario: MailboxController Delete Successful Case:
+    Given: The front-end system is requesting to delete a message
+    When:  The front-end system has provided a valid model and a user
+    Then:  The service returns a 200 status message 
+Scenario: MailboxController Post Delete Unsuccessful Case:
+    Given: The front-end system is requesting to delete a message
+    When:  The front-end system has not provided a valid model and or user
+    Then:  The service returns a 400 error
+
+Feature: Service::MailboxController:read/{user}/{messageId}
+    Not sure

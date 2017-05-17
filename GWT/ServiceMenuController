@@ -1,0 +1,62 @@
+Feature: Service::MenuController:Post
+    As a service I need to create a new Menu Item
+Scenario: MenuController Post Successful Case
+    Given: The front end system is requesting to create a new Menu Item
+    When:  The front end system has provided a valid service model
+    Then:  The system returns a 200 status message
+
+Feature: Service::MenuController:Get {UserID}
+    As a service I need to get all Menu Items by a UserID
+Scenario: MenuController Get UserID Successful Case
+    Given: The front end system is requesting all Menus Items by a given UserID
+    When:  The front end system had provided a UserID
+    Then:  The service returns a list of Menus Items by the User
+Scenario: MenuController Get UserID Unsuccessful Case
+    Given: The front end system is requesting all Menus Items by a given UserID
+    When:  The front end system had provided a UserID
+    Then:  The service returns null
+
+Feature: Service::MenuController:Get GetTotalCount/{UserId}
+    As a service I need to get the total count of menu Items
+Scenario: MenuController GetTotalCount/UserId Successful Case
+    Given: The front end system is requesting the total count of a a users menu Items
+    When:  The front end system has provided a user UserID
+    Then:  The service returns the number of total menu items of the user
+Scenario: MenuController GetTotalCount/UserId Unsuccessful Case
+    Given: The front end system is requesting the total count of a a users menu Items
+    When:  The front end system has provided a user UserID
+    Then:  The service returns null as user does not exist
+
+Feature: Service::MenuController:Delete ID
+    As a service I need to delete an menu item 
+Scenario MenuController Delete Successful Case
+    Given: The front end system is requesting to delete a menu item
+    When:  the front end service has provided a Id of the Menu Item
+    Then:  The service deletes the given Menus item
+Scenario MenuController Delete Unsuccessful Case
+    Given: The front end system is requesting to delete a menu item
+    When:  the front end service has provided a Id of the Menu Item
+    Then:  The service returns null as the ID does not exist
+
+Feature: Service::MenuController:Get MenuID
+    As a service I need to get a single menu item
+Scenario: MenuController Get MenuID Successful Case
+    Given: The front end system is requesting a single Menu Item
+    When:  The front end system hae provided a MenuID
+    Then  The service returns the Menu Item pertaining to the MenuID
+Scenario: MenuController Get MenuID Unsuccessful Case
+    Given: The front end system is requesting a single Menu Item
+    When:  The front end system hae provided a MenuID
+    Then  The service returns null as the MenuId does not exist
+
+Feature: Service::MenuController:GetMenuIngredients/{MenuId}
+    As a service I need to get all the ingredients of a single menu item
+Scenario: MenuController: GetMenuIngredients Successful Case
+    Given: The front end system is requesting a list of ingredients of a single Menu Item
+    When:  The front end system has provided a MenuID
+    Then:  The system returns a list of ingredients pertaining to the MenuID
+Scenario: MenuController: GetMenuIngredients Unsuccessful Case
+    Given: The front end system is requesting a list of ingredients of a single Menu Item
+    When:  The front end system has provided a MenuID
+    Then:  The system returns null as the MenuID does not exist
+    

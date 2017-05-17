@@ -1,0 +1,42 @@
+Feature: Service::ManageController: Post RemoveLogin
+    As a service I need to remove an account
+Scenario: ManageController RemoveLogin Successful Case 
+    Given: The front end service is requesting to remove an account from the DB
+    When:  The front end service has provided a user login
+    Then:  The service returns RemoveLoginSuccess
+Scenario: ManageController RemoveLogin Unsuccessful Case 
+    Given: The front end service is requesting to remove an account from the DB
+    When:  The front end service has not provided a user login
+    Then:  The service returns null
+Feature: Service::ManageController: AddAPhoneNumber
+    As a service I need to add a phone number to an account
+Scenario: ManageController AddAPhoneNumber Successful Case 
+    Given: The front end service is requesting to add a phone number to ann account
+    When:  The front end service has provided an accountID and a valid phone number
+    Then:  The service will return AddPhoneSuccess
+Scenario: ManageController AddAPhoneNumber Unsuccessful Case 
+    Given: The front end service is requesting to add a phone number to ann account
+    When:  The front end service has not provided an accountID
+    Then:  The service will return null
+
+Feature: Service::ManageController:EnableTwoFactorAuthentication
+    As a service I need to enable the two factor authentication 
+Scenario: ManageController: EnableTwoFactorAuthentication Successful Case
+    Give: The front end service is requesting to enable the two factor authentication 
+    When: The front end service (user) sets it to True
+    Then: The service returns SetTwoFactorSuccess
+ Scenario: ManageController: EnableTwoFactorAuthentication Unsuccessful Case
+    Give: The front end service is requesting to enable the two factor authentication 
+    When: The front end service (user)  does not sets it to True
+    Then: The service returns null
+
+Feature: Service::ManageController:DisableTwoFactorAuthentication
+    As a service I need to Disable the two factor authentication 
+Scenario: ManageController: DisableTwoFactorAuthentication Successful Case
+    Give: The front end service is requesting to Disable the two factor authentication 
+    When: The front end service (user) sets it to True
+    Then: The service returns User disabled two-factor authentication.
+ Scenario: ManageController: DisableTwoFactorAuthentication Unsuccessful Case
+    Give: The front end service is requesting to Disable the two factor authentication 
+    When: The front end service (user)  does not sets it to True
+    Then: The service returns null

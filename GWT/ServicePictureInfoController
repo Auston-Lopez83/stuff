@@ -1,0 +1,38 @@
+Feature Service:PictureInfoController:Get All
+    As a service i need to retrieve all photos info
+Scenario: PictureInfoController get all Successful Case
+    Given: The front end service has requested to list all photos info
+    Then:  The service list all photos info
+
+Feature Service::PictureInfoController:Get ID
+    As a servo\ice I need to retrieve a photo info of a single ID
+Scenario: PictureInfoController Get ID Successful Case
+    Given: The front end service is requesting the info of on photo
+    When:  The front ed service has provided an ID
+    Then:  The service returns the photo Info of that ID
+Scenario: PictureInfoController Get ID Unsuccessful Case
+    Given: The front end service is requesting the info of on photo
+    When:  The front ed service has provided an ID
+    Then:  The service returns  null
+
+Feature: Service:PictureInfoController:Get Provider ID
+    As a service I need to retrieve all photo Info of a user
+Scenario: PictureInfoController Get Provider ID Successful Case
+    Given: The front end service is requesting all photo info by a single user
+    When:  The front end service as provided a userID
+    Then:  The service returns a list of photo info by said user
+Scenario: PictureInfoController Get Provider ID Unsuccessful Case
+    Given: The front end service is requesting all photo info by a single user
+    When:  The front end service as provided a userID
+    Then:  The service returns null
+
+Feature: Service:PictureInfoController:Post
+    As a service I need to post a PhotoInfo
+Scenario: PhotoInfo Post Successful Case
+    Given: The front end system is requesting to create a new PhotoInfo
+    When:  The front end system has provided a valid model
+    Then:  The service returns Created
+Scenario: PhotoInfo Post Unsuccessful Case
+    Given: The front end system is requesting to create a new PhotoInfo
+    When:  The front end system has not provided a valid model
+    Then:  The service returns null
