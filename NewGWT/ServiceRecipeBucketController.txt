@@ -1,0 +1,54 @@
+Feature: Service::RecipeBucketController:Post 
+    As a service I need to create a new bucket recipe
+Scenario: RecipeBucketController Post Successful Case
+    Given: The front end system is requesting to create a new bucket recipe
+    When:  The front end system has provided a valid service model
+    Then:  The service returns a 200 status message
+Scenario: RecipeBucketController Post Unsuccessful Case
+    Given: The front end system is requesting to create a new bucket recipe
+    When:  The front end system has not provided a valid service model
+    Then:  The service returns a 400 status message
+
+Feature: Service:RecipeBucketController:Put recipeID/Username/RecipeName
+    As a service I need to update a recipe
+Scenario: RecipeBucketController Put recipeID/Username/RecipeName Successful Case
+    Given: The front end system is requesting to update a specific bucket recipe
+    When:  The front end service has provided a hydrated service model
+    And:   The service mode is valid
+    Then:  The service returns a 200 status message
+Scenario: RecipeBucketController Put recipeID/Username/RecipeName Unsuccessful Case
+    Given: The front end system is requesting to update a specific bucket recipe
+    When:  The front end service has provided a hydrated service model
+    And:   The service model is not valid
+    Then:  The service returns a 400 status message
+
+Feature: Service::RecipeBucketController:Get UserName
+    As a service I need to list all bucket recipes of a single User 
+Scenario: RecipeBucketController Get Successful Case
+    Given: The front end system is requesting to list all bucket recipes
+    Then:  The service returns a list all the recipes
+Scenario: RecipeBucketController Get Unsuccessful Case
+    Given: The front end system is requesting to list all bucked recipes
+    Then:  The service returns null as the user does not have any recipes in the DocumentDB
+
+Feature: Service::RecipeBucketController:Delete
+    As a service I need to delete a specific bucket recipe
+Scenario: RecipeBucketController Delete Successful Case
+    Given: The front end system is requesting to delete a single recipe
+    When:  The front end system has given a valid recipeID and UserName
+    Then:  The service returns a 200 status message
+Scenario: RecipeBucketController Delete Unsuccessful Case
+    Given: The front end system is requesting to delete a single recipe
+    When:  The front end system has not given a valid recipeID and UserName
+    Then:  The service returns a 400 status message
+
+Feature: Service:RecipeBucketController:Post recipeID/Username/RecipeName/servings
+    As a service I need to create a recipe
+Scenario: RecipeBucketController Post Successful Case
+    Given: The front end system is requesting to create a bucket recipe
+    When:  The front end service has provided a service mode that is valid
+    Then:  The service returns a 200 status message
+Scenario: RecipeBucketController Post Unsuccessful Case
+    Given: The front end system is requesting to update a specific bucket recipe
+    When:  The front end service has provided a model that is not valid
+    Then:  The service returns a 400 status message
