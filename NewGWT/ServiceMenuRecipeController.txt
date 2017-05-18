@@ -1,0 +1,10 @@
+Feature: Service::MenuRecipeController:Post {MenuID}
+    As a service I need to post a new Menu recipe or update one
+Scenario: MenuRecipeController Post Successful Case:
+    Given: The front end system is requesting to create a new menu recipe or update one
+    When:  The front end system has provided a valid service model
+    Then:  The service gives a 200 status message
+Scenario: MenuRecipeController Post Unsuccessful Case:
+    Given: The front end system is requesting to create a new menu recipe or update one
+    When:  The front end system has not provided a valid service model
+    Then:  The service gives a 400 error message

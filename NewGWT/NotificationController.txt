@@ -1,0 +1,53 @@
+Feature: Service::NotificationController:Post {UserID}
+    As a service I need to create a new Notification
+Scenario: NotificationController Post Successful Case:
+    Given: The front end system wants to create a new Notification
+    When:  The front end system has provided a valid service model
+    Then:  The service returns a 200 status request
+Scenario: NotificationController Post Unsuccessful Case:
+    Given: The front end system wants to create a new Notification
+    When:  The front end system has not provided a valid service model
+    Then:  The service returns a 400 status request
+
+Feature: Service::NotificationController:Get {UserID}
+    As a service I need to get all Notifications for a single User
+Scenario: NotificationController Get Successful Case:
+    Given: The front end system wants to list all Notifications of a singe user
+    Then:  The service returns a 200 status request
+Scenario: NotificationController Get Unsuccessful Case
+    Given: The front end system wants to list all Notifications of a single user
+    Then:  The service returns null as no Notifications exist
+
+Feature: Service::NotificationController:Post 
+    As a service I need to update a Notification
+Scenario: NotificationController Post Successful Case:
+    Given: The front end system wants update a Notification
+    When:  The front end system has provided a valid service model
+    Then:  The service returns a 200 status request
+Scenario: NotificationController Post Unsuccessful Case:
+    Given: The front end system wants to update a Notification
+    When:  The front end system has not provided a valid service model
+    Then:  The service returns a 400 status request
+
+Feature: Service::NotificationController:Put ("read/{userid}/{messageid}")
+    As a service I need to make a Notification as read
+Scenario: NotificationController Put Successful Case:
+    Given: The front end system request to make a Notification as read
+    When:  The front end system has provided a messageid and a userid
+    Then:  The service returns a 200 status request
+Scenario: NotificationController Put Unsuccessful Case:
+    Given: The front end system wants to update a Notification
+    When:  The front end system has not provided a messageid and a userid
+    Then:  The service returns a 400 status request
+
+Feature: Service::NotificationController:Put ("delete/{userid}/{messageid}")
+    As a service I want to delete a Notification
+Scenario: NotificationController Put Successful Case:
+    Given: The front end system request to delete a Notification
+    When:  The front end system has provided a messageid and a userid
+    Then:  The service returns a 200 status request
+Scenario: NotificationController Put Unsuccessful Case:
+    Given: The front end system wants to delete a Notification
+    When:  The front end system has not provided a messageid and a userid
+    Then:  The service returns a 400 status request
+    

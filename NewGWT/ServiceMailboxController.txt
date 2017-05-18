@@ -88,4 +88,12 @@ Scenario: MailboxController Post Delete Unsuccessful Case:
     Then:  The service returns a 400 error
 
 Feature: Service::MailboxController:read/{user}/{messageId}
-    Not sure
+    As a service I need to mark a message as read
+Scenario: MailboxController: read Successful Case
+    Given: The front end service is requesting a message to be marked as read
+    When:  The front end service has provided a messageId and userId
+    Then:  The service returns a 200 status message
+Scenario: MailboxController: Read Unsuccessful Case
+    Given: The front end system is requesting a message to be marked as read
+    When:  The front end service has now provided a messageId and/or userId
+    Then:  The service returns a 400 status error

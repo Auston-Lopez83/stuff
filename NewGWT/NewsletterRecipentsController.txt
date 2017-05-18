@@ -1,0 +1,19 @@
+Feature: Service::NewsletterRecipientsController:Get 
+    As a service I need to list all the newsletters
+Scenario: NewsletterRecipientsController Get Successful Case:
+    Given: The front end system is requesting to make a list of all the newsletters in the Document DB
+    Then:  The service returns the list of all the newsletters
+Scenario: NewsletterRecipientsController Get Unsuccessful Case:
+    Given: The front end system is requesting to create a new menu recipe or update one
+    Then:  The service returns null as no newsletters exist
+
+Feature: Service::NewsletterRecipientsController:Post
+    As a service I need to create a new newsletter
+Scenario: NewsletterRecipientsController Post Successful Case:
+    Given: The front end system wants to create a new newsletter
+    When:  The front end system has provided a valid service model
+    Then:  The service returns a 200 status request
+Scenario: NewsletterRecipientsController Post Unsuccessful Case:
+    Given: The front end system wants to create a new newsletter
+    When:  The front end system has not provided a valid service model
+    Then:  The service returns a 400 status request
