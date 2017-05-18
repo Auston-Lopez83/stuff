@@ -1,0 +1,53 @@
+Feature: Service::ProfileRelationshipController:Get {User}
+    As a service I need to list all the followers and/or blockers of a single user
+Scenario: ProfileRelationshipController Get user Successful Case
+    Given: The front end service is requesting all followers and / or blockers of a user in the DocumentDB
+    Then:  The service returns a list of the followers and / or blockers
+Scenario: ProfileRelationshipController Get user Unsuccessful Case
+    Given: The front end service is requesting all followers and/or blockers of a user in the DocumentDB
+    Then:  The service returns null as the user has no followers and/or blockers (in the DocumentDB)
+
+Feature: Service::ProfileRelationshipController:Post "add/block"
+    As a service I need to add a follower to the block list
+Scenario: ProfileRelationshipController Post "add/block" Successful Case
+    Given: The front end system is requesting to block a user
+    When:  The front end system has provided an ID of a follower
+    Then:  The service returns a 200 status message
+Scenario: ProfileRelationshipController Post "add/block" Unsuccessful Case
+    Given: The front end system is requesting to block a user
+    When:  The front end system has not provided an ID of a follower
+    Then:  The service returns a 400 status message
+
+Feature: Service::ProfileRelationshipController:Post "remove/block"
+    As a service I need to remove a user from the block list
+Scenario: ProfileRelationshipController Post remove/block Successful Case
+    Given: The front end system is requesting to remove a user from the blocked list
+    When:  The front end system has provided a user ID
+    Then:  The service returns a 200 status message
+Scenario: ProfileRelationshipController Post remove/block Unsuccessful Case
+    Given: The front end system is requesting to remove a user from the blocked list
+    When:  The front end system has not provided a user ID
+    Then:  The service returns a 400 status message
+
+Feature: Service::ProfileRelationshipController:Post "add/follower"
+    As a service I need to add a follower to the block list
+Scenario: ProfileRelationshipController Post "add/follower" Successful Case
+    Given: The front end system is requesting to block a user
+    When:  The front end system has provided an ID of a follower
+    Then:  The service returns a 200 status message
+Scenario: ProfileRelationshipController Post "add/follower" Unsuccessful Case
+    Given: The front end system is requesting to block a user
+    When:  The front end system has not provided an ID of a follower
+    Then:  The service returns a 400 status message
+
+Feature: Service::ProfileRelationshipController:Post "remove/follower"
+    As a service I need to remove a user from the follower list
+Scenario: ProfileRelationshipController Post remove/follower Successful Case
+    Given: The front end system is requesting to remove a user from the follower list
+    When:  The front end system has provided a user ID
+    Then:  The service returns a 200 status message
+Scenario: ProfileRelationshipController Post remove/follower Unsuccessful Case
+    Given: The front end system is requesting to remove a user from the follower list
+    When:  The front end system has not provided a user ID
+    Then:  The service returns a 400 status message
+

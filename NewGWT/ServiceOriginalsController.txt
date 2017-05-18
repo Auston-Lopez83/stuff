@@ -1,0 +1,57 @@
+Feature: Service::OriginalsController:Get 
+    As a service I need to list all the original recipes
+Scenario: OriginalsController Get Successful Case:
+    Given: The front end system is requesting a list of all the original recipes
+    Then:  The service returns the list of recipes
+    And:   The service returns a 200 status message
+Scenario: OriginalsController Get Unsuccessful Case:
+    Given: The front end system is requesting a list of all the original recipes
+    Then:  The service returns null as there is nothing in the DocumentDB
+    And:   The service returns a 400 status message
+
+Feature: Service::OriginalsController:Get {ID}
+    As a service I need to get a single recipe 
+Scenario: OriginalsController Get ID Successful Case
+    Given: The front end service is requesting a single recipe from the DocumentDB
+    When:  The front end service has provided a valid recipe's ID
+    Then:  The service returns a 200 status message
+    And:   The service returns the single recipe
+Scenario: OriginalsController Get ID Unsuccessful Case
+    Given: The front end service is requesting a single recipe from the DocumentDB
+    When:  The front end service has not provided a valid recipe's ID
+    Then:  The service returns a 400 status message
+
+Feature: Service::OriginalsController:Put
+    As a service I need to update a original recipe
+Scenario: OriginalsController Put Successful Case
+    Given: The front end service is requesting to update a recipe
+    When:  The front end service has provided a hydrated service model
+    And:   The Service model is valid
+    Then:  THe service returns a 200 status message
+Scenario: OriginalsController Put Unsuccessful Case
+    Given: The front end service is requesting to update a recipe
+    When:  The front end service has  provided a hydrated service model
+    And:   The service model is not valid
+    Then:  The service returns a 400 status message    
+
+Feature: Service::OriginalsController:Post
+    As a service I need to create a new original recipe
+Scenario: OriginalsController Post Successful Case
+    Given: The front end service is requesting to create a new recipe
+    When:  The front end system has provided a valid service model
+    Then:  The service returns a 200 status message
+Scenario: OriginalsController Post Unsuccessful Case
+    Given: The front end system is requesting to create a new recipe
+    When:  The front end system has not provided a valid service model
+    Then:  The Service returns a 400 status message
+
+Feature: Service::OriginalsController:Delete {ID}
+    As a service I need to delete a recipe
+Scenario: OriginalsController Delete Successful Case
+    Given: The front end service is requesting to delete a recipe
+    When:  The front end system has provided a valid ID
+    Then:  The service returns a 200 status message
+Scenario: OriginalsController Delete Unsuccessful Case
+    Given: The front end system is requesting to delete a recipe
+    When:  The front end system has not provided a valid ID
+    Then:  The Service returns a 400 status message
