@@ -1,0 +1,4 @@
+Feature Service::RecipeController: Post UpdateTwitter/{id}/{blurb}
+    As a service I need to update a twitter blurb
+Scenario RecipeController:Post UpdateTwitter Successful Case
+    Given: The front end system is requesting to update a twitter blurb

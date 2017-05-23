@@ -7,7 +7,7 @@ Scenario: MailboxController Post Successful Case:
 Scenario: MailboxController Post Unsuccessful Case:
     Given: The front-end system is requesting to create a new message
     When:  The front-end system has not provided a valid model 
-    Then:  The service returns nothing
+    Then:  The service returns a 400 error
 
 Feature: Service::MailboxController: Get {User}/{Page}/{SortOption}/{Tag}
     As a service I need to retrieve messages with a unique tag
@@ -29,7 +29,7 @@ Scenario: MailboxController Get {User} Successful Case
 Scenario: MailboxController Get {User} Unsuccessful Case
     Given: The front-end system is requesting a list of all messages of a single user
     When:  The front-end system has given a userId
-    Then:  The service will return null as use does not exist
+    Then:  The service will return null as user does not exist
 
 Feature: Service:MailboxController:Post AddMessage/{User}
     As a service I need to update a message
@@ -63,7 +63,7 @@ Scenario: MailboxController Post InsertTags/{User}/{id} Successful Case
 Scenario: MailboxController Post InsertTags/{User}/{id} Unsuccessful Case
     Given: The front end service is requesting to add a tag to a message
     When:  The front end service has not provided a hydrated service model  
-    Then:  The system will return null as the message does not exist
+    Then:  The system will return 400 error as the message does not exist
 
 Feature: Service::MailboxController:Post SendMessage/{User}
     As a service I need to send a message to another User
@@ -74,7 +74,7 @@ Scenario: MailboxController Post SendMessage/{User} Successful Case:
 Scenario: MailboxController Post SendMessage/{User} Unsuccessful Case:
     Given: The front-end system is requesting to send a message to a User
     When:  The front-end system has not provided a valid model and or user
-    Then:  The service returns nothing
+    Then:  The service returns a 400 error
 
 Feature: Service::MailboxController:Delete
     As a service I need to delete a message
@@ -85,7 +85,15 @@ Scenario: MailboxController Delete Successful Case:
 Scenario: MailboxController Post Delete Unsuccessful Case:
     Given: The front-end system is requesting to delete a message
     When:  The front-end system has not provided a valid model and or user
-    Then:  The service returns nothing
+    Then:  The service returns a 400 error
 
 Feature: Service::MailboxController:read/{user}/{messageId}
-    Not sure
+    As a service I need to mark a message as read
+Scenario: MailboxController: read Successful Case
+    Given: The front end service is requesting a message to be marked as read
+    When:  The front end service has provided a messageId and userId
+    Then:  The service returns a 200 status message
+Scenario: MailboxController: Read Unsuccessful Case
+    Given: The front end system is requesting a message to be marked as read
+    When:  The front end service has now provided a messageId and/or userId
+    Then:  The service returns a 400 status error
