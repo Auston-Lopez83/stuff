@@ -2,3 +2,22 @@ Feature Service::RecipeController: Post UpdateTwitter/{id}/{blurb}
     As a service I need to update a twitter blurb
 Scenario RecipeController:Post UpdateTwitter Successful Case
     Given: The front end system is requesting to update a twitter blurb
+    When:  The front end system has provided a hydrated service model
+    And:   The updated service model is valid
+    Then:  The service returns a 200 status message 
+Scenario RecipeController:Post UpdateTwitter Unsuccessful Case
+    Given: The front end system is requesting to update a twitter blurb
+    When:  The front end system has provided a hydrated service model
+    And:   The updated service model is not valid
+    Then:  The service returns a 400 status message
+
+Feature Service::RecipeController: Post GetByListString 
+    As a service I need to list of Recipes
+Scenario: RecipeController Post GetByListString Successful Case
+    Given: The front end system is requesting to display a list of all Recipes
+    Then:  The service returns a list of all recipes in the DocumentDB
+Scenario: RecipeController Post GetByListString Unsuccessful Case
+    Given: The front end system is requesting to display a list of all Recipes
+    Then:  The service returns null as no recipes are in the DocumentDB
+
+Feature Service::RecipeController: Post :
